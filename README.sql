@@ -92,3 +92,37 @@ WHERE
     CC.total_challenges = M.max_challenges
     OR CG.freq = 1
 ORDER BY CC.total_challenges DESC, CC.hacker_id ASC;
+
+
+
+
+This is not a hackerrank code I solve this from a dataset
+
+
+SELECT 
+    hs.year,
+    hs.country,
+    hs.happiness_score,
+    ROUND(country_hs.avg_hs_score, 2) AS avg_hs_score
+FROM
+    happiness_scores hs
+        LEFT JOIN
+    (SELECT 
+        year, country, happiness_score
+    FROM
+        happiness_scores UNION SELECT 
+        year, country_name, inflation_rate
+    FROM
+        inflation_rates) AS country_union ON country_union.year = hs.year
+        AND country_union.country = hs.country
+        LEFT JOIN
+    (SELECT 
+        country, AVG(happiness_score) AS avg_hs_score
+    FROM
+        happiness_scores
+    GROUP BY country
+    HAVING COUNT(*) > 1) AS country_hs ON country_hs.country = hs.country
+WHERE
+    hs.happiness_score > avg_hs_score
+GROUP BY hs.year , hs.country
+ORDER BY country
